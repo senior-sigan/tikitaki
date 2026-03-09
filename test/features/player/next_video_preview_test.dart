@@ -6,67 +6,55 @@ import 'package:tikitaki/features/player/next_video_preview.dart';
 
 void main() {
   group('NextVideoPreview', () {
-    testWidgets('renders VideoThumbnail with correct URL', (tester) async {
+    testWidgets('renders VideoThumbnail with correct URL when dragging', (
+      tester,
+    ) async {
       final controller = PageController();
       addTearDown(controller.dispose);
 
+      // Wrap in a PageView so the controller has clients and a non-zero page.
       await tester.pumpWidget(
         MaterialApp(
           home: Scaffold(
-            body: NextVideoPreview(
-              pageController: controller,
-              nextThumbnailUrl: 'https://example.com/thumb.jpg',
-              currentIndex: 0,
+            body: SizedBox(
+              height: 600,
+              child: Stack(
+                children: [
+                  PageView(
+                    controller: controller,
+                    scrollDirection: Axis.vertical,
+                    children: [
+                      const SizedBox.expand(),
+                      const SizedBox.expand(),
+                    ],
+                  ),
+                  NextVideoPreview(
+                    pageController: controller,
+                    nextThumbnailUrl: 'https://example.com/thumb.jpg',
+                    currentIndex: 0,
+                  ),
+                ],
+              ),
             ),
           ),
         ),
       );
+
+      // Simulate a partial drag to get non-zero dragProgress.
+      final gesture = await tester.startGesture(const Offset(200, 300));
+      await gesture.moveBy(const Offset(0, -100));
+      await tester.pump();
 
       final thumbnail = tester.widget<VideoThumbnail>(
         find.byType(VideoThumbnail),
       );
       check(thumbnail.thumbnailUrl).equals('https://example.com/thumb.jpg');
+
+      await gesture.cancel();
+      await tester.pumpAndSettle();
     });
 
-    testWidgets('renders Opacity widget', (tester) async {
-      final controller = PageController();
-      addTearDown(controller.dispose);
-
-      await tester.pumpWidget(
-        MaterialApp(
-          home: Scaffold(
-            body: NextVideoPreview(
-              pageController: controller,
-              nextThumbnailUrl: 'https://example.com/thumb.jpg',
-              currentIndex: 0,
-            ),
-          ),
-        ),
-      );
-
-      check(find.byType(Opacity).evaluate().length).isGreaterThan(0);
-    });
-
-    testWidgets('renders Transform widget', (tester) async {
-      final controller = PageController();
-      addTearDown(controller.dispose);
-
-      await tester.pumpWidget(
-        MaterialApp(
-          home: Scaffold(
-            body: NextVideoPreview(
-              pageController: controller,
-              nextThumbnailUrl: 'https://example.com/thumb.jpg',
-              currentIndex: 0,
-            ),
-          ),
-        ),
-      );
-
-      check(find.byType(Transform).evaluate().length).isGreaterThan(0);
-    });
-
-    testWidgets('is hidden (opacity 0) when pageController has no clients', (
+    testWidgets('returns SizedBox.shrink when dragProgress is zero', (
       tester,
     ) async {
       final controller = PageController();
@@ -84,12 +72,59 @@ void main() {
         ),
       );
 
-      // When the PageController has no clients (not attached to a PageView),
-      // the widget should default to opacity 0 (hidden).
-      // Note: In this test setup the controller IS attached via the build,
-      // but .page returns null before the first frame, so we check initial state.
-      // We need a controller that truly has no clients — use a separate one
-      // not attached to any scrollable.
+      // At rest, the widget should return SizedBox.shrink (no Opacity, no child).
+      check(find.byType(Opacity).evaluate().length).equals(0);
+      check(find.byType(VideoThumbnail).evaluate().length).equals(0);
+    });
+
+    testWidgets('renders Opacity and Transform widgets when dragging', (
+      tester,
+    ) async {
+      final controller = PageController();
+      addTearDown(controller.dispose);
+
+      await tester.pumpWidget(
+        MaterialApp(
+          home: Scaffold(
+            body: SizedBox(
+              height: 600,
+              child: Stack(
+                children: [
+                  PageView(
+                    controller: controller,
+                    scrollDirection: Axis.vertical,
+                    children: [
+                      const SizedBox.expand(),
+                      const SizedBox.expand(),
+                    ],
+                  ),
+                  NextVideoPreview(
+                    pageController: controller,
+                    nextThumbnailUrl: 'https://example.com/thumb.jpg',
+                    currentIndex: 0,
+                  ),
+                ],
+              ),
+            ),
+          ),
+        ),
+      );
+
+      // Simulate a partial drag to get non-zero dragProgress.
+      final gesture = await tester.startGesture(const Offset(200, 300));
+      await gesture.moveBy(const Offset(0, -100));
+      await tester.pump();
+
+      check(find.byType(Opacity).evaluate().length).isGreaterThan(0);
+      check(find.byType(Transform).evaluate().length).isGreaterThan(0);
+
+      await gesture.cancel();
+      await tester.pumpAndSettle();
+    });
+
+    testWidgets('renders SizedBox.shrink when pageController has no clients', (
+      tester,
+    ) async {
       final detachedController = PageController();
       addTearDown(detachedController.dispose);
 
@@ -105,12 +140,14 @@ void main() {
         ),
       );
 
-      final opacity = tester.widget<Opacity>(find.byType(Opacity));
-      check(opacity.opacity).equals(0.0);
+      // When dragProgress is 0, the widget returns SizedBox.shrink
+      // instead of rendering an invisible Opacity(0.0) tree.
+      check(find.byType(Opacity).evaluate().length).equals(0);
+      check(find.byType(VideoThumbnail).evaluate().length).equals(0);
     });
 
     testWidgets(
-      'wraps content in Container with black54 background and rounded top corners',
+      'wraps content in DecoratedBox with black54 background and rounded top corners when dragging',
       (tester) async {
         final controller = PageController();
         addTearDown(controller.dispose);
@@ -118,14 +155,34 @@ void main() {
         await tester.pumpWidget(
           MaterialApp(
             home: Scaffold(
-              body: NextVideoPreview(
-                pageController: controller,
-                nextThumbnailUrl: 'https://example.com/thumb.jpg',
-                currentIndex: 0,
+              body: SizedBox(
+                height: 600,
+                child: Stack(
+                  children: [
+                    PageView(
+                      controller: controller,
+                      scrollDirection: Axis.vertical,
+                      children: [
+                        const SizedBox.expand(),
+                        const SizedBox.expand(),
+                      ],
+                    ),
+                    NextVideoPreview(
+                      pageController: controller,
+                      nextThumbnailUrl: 'https://example.com/thumb.jpg',
+                      currentIndex: 0,
+                    ),
+                  ],
+                ),
               ),
             ),
           ),
         );
+
+        // Simulate a partial drag to reveal the preview.
+        final gesture = await tester.startGesture(const Offset(200, 300));
+        await gesture.moveBy(const Offset(0, -100));
+        await tester.pump();
 
         final container = tester.widget<DecoratedBox>(
           find.byType(DecoratedBox).first,
@@ -138,6 +195,9 @@ void main() {
             topRight: Radius.circular(12),
           ),
         );
+
+        await gesture.cancel();
+        await tester.pumpAndSettle();
       },
     );
   });

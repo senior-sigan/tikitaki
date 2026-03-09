@@ -93,8 +93,7 @@ class _PlayerScreenState extends State<PlayerScreen> {
           builder: (context, _) {
             final vm = widget.playerViewModel;
             if (!vm.hasNext) return const SizedBox.shrink();
-            final nextThumbnailUrl = resolveUrl(
-              widget.baseUrl,
+            final nextThumbnailUrl = _resolveVideoUrl(
               vm.videoList[vm.currentIndex + 1].thumbnailUrl,
             );
             return Positioned(

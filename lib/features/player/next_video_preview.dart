@@ -26,6 +26,8 @@ class NextVideoPreview extends StatelessWidget {
           dragProgress = (pageController.page! - currentIndex).clamp(0.0, 1.0);
         }
 
+        if (dragProgress == 0.0) return const SizedBox.shrink();
+
         return Opacity(
           opacity: dragProgress,
           child: Transform.translate(
