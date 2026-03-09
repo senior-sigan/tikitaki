@@ -31,7 +31,7 @@ class NavigationShell extends StatelessWidget {
           Positioned(
             left: 24,
             right: 24,
-            bottom: 24,
+            bottom: 8,
             child: SafeArea(
               child: Container(
                 padding: const EdgeInsets.symmetric(
