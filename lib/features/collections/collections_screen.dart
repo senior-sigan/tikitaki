@@ -30,8 +30,9 @@ class CollectionsScreen extends StatelessWidget {
             padding: const EdgeInsets.all(8),
             gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
               crossAxisCount: 2,
-              crossAxisSpacing: 8,
-              mainAxisSpacing: 8,
+              crossAxisSpacing: 3,
+              mainAxisSpacing: 3,
+              childAspectRatio: 3 / 4,
             ),
             itemCount: previews.length,
             itemBuilder: (context, index) {
