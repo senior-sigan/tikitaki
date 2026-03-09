@@ -22,7 +22,7 @@ class VideoGrid extends StatelessWidget {
     final grid = GridView.builder(
       padding: const EdgeInsets.all(8),
       gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
-        crossAxisCount: 2,
+        crossAxisCount: 3,
         crossAxisSpacing: 3,
         mainAxisSpacing: 3,
         childAspectRatio: 3 / 4,
