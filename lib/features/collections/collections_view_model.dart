@@ -5,7 +5,7 @@ import 'package:tikitaki/features/history/video_list_view_model.dart';
 
 class CollectionsViewModel extends ChangeNotifier {
   CollectionsViewModel({required VideoListViewModel videoListViewModel})
-      : _videoListViewModel = videoListViewModel {
+    : _videoListViewModel = videoListViewModel {
     _videoListViewModel.addListener(_onVideoListChanged);
   }
 

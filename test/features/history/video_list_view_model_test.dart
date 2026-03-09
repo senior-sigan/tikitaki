@@ -48,8 +48,9 @@ void main() {
         states.add(viewModel.state);
       });
 
-      when(() => mockRepository.getVideos())
-          .thenAnswer((_) async => [catVideo, dogVideo]);
+      when(
+        () => mockRepository.getVideos(),
+      ).thenAnswer((_) async => [catVideo, dogVideo]);
 
       await viewModel.load();
 
@@ -57,25 +58,31 @@ void main() {
       check(viewModel.videos.length).equals(2);
     });
 
-    test('load transitions from initial to loading to error on failure',
-        () async {
-      final states = <VideoListState>[];
-      viewModel.addListener(() {
-        states.add(viewModel.state);
-      });
+    test(
+      'load transitions from initial to loading to error on failure',
+      () async {
+        final states = <VideoListState>[];
+        viewModel.addListener(() {
+          states.add(viewModel.state);
+        });
 
-      when(() => mockRepository.getVideos())
-          .thenThrow(Exception('Network error'));
+        when(
+          () => mockRepository.getVideos(),
+        ).thenThrow(Exception('Network error'));
 
-      await viewModel.load();
+        await viewModel.load();
 
-      check(states).deepEquals([VideoListState.loading, VideoListState.error]);
-      check(viewModel.errorMessage).equals('Exception: Network error');
-    });
+        check(
+          states,
+        ).deepEquals([VideoListState.loading, VideoListState.error]);
+        check(viewModel.errorMessage).equals('Exception: Network error');
+      },
+    );
 
     test('videos getter returns list sorted by collection', () async {
-      when(() => mockRepository.getVideos())
-          .thenAnswer((_) async => [zebraVideo, catVideo, dogVideo]);
+      when(
+        () => mockRepository.getVideos(),
+      ).thenAnswer((_) async => [zebraVideo, catVideo, dogVideo]);
 
       await viewModel.load();
 
@@ -85,22 +92,25 @@ void main() {
     });
 
     test('refresh reloads data from repository', () async {
-      when(() => mockRepository.getVideos())
-          .thenAnswer((_) async => [catVideo]);
+      when(
+        () => mockRepository.getVideos(),
+      ).thenAnswer((_) async => [catVideo]);
 
       await viewModel.load();
       check(viewModel.videos.length).equals(1);
 
-      when(() => mockRepository.getVideos())
-          .thenAnswer((_) async => [catVideo, dogVideo]);
+      when(
+        () => mockRepository.getVideos(),
+      ).thenAnswer((_) async => [catVideo, dogVideo]);
 
       await viewModel.refresh();
       check(viewModel.videos.length).equals(2);
     });
 
     test('refresh calls repository getVideos', () async {
-      when(() => mockRepository.getVideos())
-          .thenAnswer((_) async => [catVideo]);
+      when(
+        () => mockRepository.getVideos(),
+      ).thenAnswer((_) async => [catVideo]);
 
       await viewModel.refresh();
 

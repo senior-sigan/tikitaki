@@ -47,10 +47,12 @@ void main() {
 
   group('FavoritesViewModel', () {
     test('favoriteVideos returns only favorited videos', () async {
-      when(() => mockVideoRepository.getVideos())
-          .thenAnswer((_) async => [catVideo, dogVideo]);
-      when(() => mockFavoritesRepository.getFavoriteVideos(any()))
-          .thenReturn([catVideo]);
+      when(
+        () => mockVideoRepository.getVideos(),
+      ).thenAnswer((_) async => [catVideo, dogVideo]);
+      when(
+        () => mockFavoritesRepository.getFavoriteVideos(any()),
+      ).thenReturn([catVideo]);
 
       await videoListViewModel.load();
 
@@ -60,10 +62,12 @@ void main() {
     });
 
     test('favoriteVideos returns empty list when no favorites', () async {
-      when(() => mockVideoRepository.getVideos())
-          .thenAnswer((_) async => [catVideo, dogVideo]);
-      when(() => mockFavoritesRepository.getFavoriteVideos(any()))
-          .thenReturn([]);
+      when(
+        () => mockVideoRepository.getVideos(),
+      ).thenAnswer((_) async => [catVideo, dogVideo]);
+      when(
+        () => mockFavoritesRepository.getFavoriteVideos(any()),
+      ).thenReturn([]);
 
       await videoListViewModel.load();
 
@@ -71,8 +75,9 @@ void main() {
     });
 
     test('toggle calls repository toggle and notifies listeners', () async {
-      when(() => mockFavoritesRepository.toggle(any()))
-          .thenAnswer((_) async {});
+      when(
+        () => mockFavoritesRepository.toggle(any()),
+      ).thenAnswer((_) async {});
 
       var notified = false;
       favoritesViewModel.addListener(() {
@@ -81,16 +86,19 @@ void main() {
 
       await favoritesViewModel.toggle('/media/cats/a.mp4');
 
-      verify(() => mockFavoritesRepository.toggle('/media/cats/a.mp4'))
-          .called(1);
+      verify(
+        () => mockFavoritesRepository.toggle('/media/cats/a.mp4'),
+      ).called(1);
       check(notified).equals(true);
     });
 
     test('isFavorite returns correct status from repository', () {
-      when(() => mockFavoritesRepository.isFavorite('/media/cats/a.mp4'))
-          .thenReturn(true);
-      when(() => mockFavoritesRepository.isFavorite('/media/dogs/b.mp4'))
-          .thenReturn(false);
+      when(
+        () => mockFavoritesRepository.isFavorite('/media/cats/a.mp4'),
+      ).thenReturn(true);
+      when(
+        () => mockFavoritesRepository.isFavorite('/media/dogs/b.mp4'),
+      ).thenReturn(false);
 
       check(favoritesViewModel.isFavorite('/media/cats/a.mp4')).equals(true);
       check(favoritesViewModel.isFavorite('/media/dogs/b.mp4')).equals(false);
@@ -102,8 +110,9 @@ void main() {
         notifyCount++;
       });
 
-      when(() => mockVideoRepository.getVideos())
-          .thenAnswer((_) async => [catVideo]);
+      when(
+        () => mockVideoRepository.getVideos(),
+      ).thenAnswer((_) async => [catVideo]);
 
       await videoListViewModel.load();
 

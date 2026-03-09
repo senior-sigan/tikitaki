@@ -6,10 +6,7 @@ import 'package:tikitaki/data/video_item.dart';
 import 'package:tikitaki/data/video_repository.dart';
 
 class HttpVideoRepository implements VideoRepository {
-  const HttpVideoRepository({
-    required this.client,
-    required this.baseUrl,
-  });
+  const HttpVideoRepository({required this.client, required this.baseUrl});
 
   final http.Client client;
   final String baseUrl;

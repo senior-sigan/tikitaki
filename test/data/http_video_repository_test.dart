@@ -33,8 +33,9 @@ void main() {
         ],
       });
 
-      when(() => mockClient.get(Uri.parse('http://localhost:8080/api')))
-          .thenAnswer((_) async => http.Response(responseBody, 200));
+      when(
+        () => mockClient.get(Uri.parse('http://localhost:8080/api')),
+      ).thenAnswer((_) async => http.Response(responseBody, 200));
 
       final videos = await repository.getVideos();
 
@@ -44,13 +45,15 @@ void main() {
       check(videos[0].collection).equals('cats');
       check(videos[0].thumbnailUrl).equals('/media/cats/funny.jpg');
 
-      verify(() => mockClient.get(Uri.parse('http://localhost:8080/api')))
-          .called(1);
+      verify(
+        () => mockClient.get(Uri.parse('http://localhost:8080/api')),
+      ).called(1);
     });
 
     test('getVideos throws exception on network error', () async {
-      when(() => mockClient.get(Uri.parse('http://localhost:8080/api')))
-          .thenThrow(Exception('Network error'));
+      when(
+        () => mockClient.get(Uri.parse('http://localhost:8080/api')),
+      ).thenThrow(Exception('Network error'));
 
       await check(repository.getVideos()).throws<Exception>();
     });

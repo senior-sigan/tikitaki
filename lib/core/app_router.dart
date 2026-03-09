@@ -1,9 +1,27 @@
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
+import 'package:tikitaki/data/settings_repository.dart';
+import 'package:tikitaki/data/video_item.dart';
+import 'package:tikitaki/features/collections/collection_detail_screen.dart';
+import 'package:tikitaki/features/collections/collections_screen.dart';
+import 'package:tikitaki/features/collections/collections_view_model.dart';
+import 'package:tikitaki/features/favorites/favorites_screen.dart';
+import 'package:tikitaki/features/favorites/favorites_view_model.dart';
+import 'package:tikitaki/features/history/history_screen.dart';
+import 'package:tikitaki/features/history/video_list_view_model.dart';
+import 'package:tikitaki/features/player/player_screen.dart';
+import 'package:tikitaki/features/player/player_view_model.dart';
+import 'package:tikitaki/features/settings/settings_screen.dart';
 
 import 'navigation_shell.dart';
 
-GoRouter createAppRouter() => GoRouter(
+GoRouter createAppRouter({
+  required VideoListViewModel videoListViewModel,
+  required CollectionsViewModel collectionsViewModel,
+  required FavoritesViewModel favoritesViewModel,
+  required SettingsRepository settingsRepository,
+  required String baseUrl,
+}) => GoRouter(
   initialLocation: '/',
   routes: [
     StatefulShellRoute.indexedStack(
@@ -15,7 +33,11 @@ GoRouter createAppRouter() => GoRouter(
           routes: [
             GoRoute(
               path: '/',
-              builder: (context, state) => const HistoryPlaceholder(),
+              builder: (context, state) => HistoryScreen(
+                videoListViewModel: videoListViewModel,
+                favoritesViewModel: favoritesViewModel,
+                baseUrl: baseUrl,
+              ),
             ),
           ],
         ),
@@ -23,13 +45,22 @@ GoRouter createAppRouter() => GoRouter(
           routes: [
             GoRoute(
               path: '/collections',
-              builder: (context, state) => const CollectionsPlaceholder(),
+              builder: (context, state) => CollectionsScreen(
+                collectionsViewModel: collectionsViewModel,
+                baseUrl: baseUrl,
+                onCollectionTap: null,
+              ),
               routes: [
                 GoRoute(
                   path: ':name',
                   builder: (context, state) {
                     final name = state.pathParameters['name'] ?? '';
-                    return CollectionDetailPlaceholder(name: name);
+                    return CollectionDetailScreen(
+                      collectionName: name,
+                      collectionsViewModel: collectionsViewModel,
+                      favoritesViewModel: favoritesViewModel,
+                      baseUrl: baseUrl,
+                    );
                   },
                 ),
               ],
@@ -40,7 +71,10 @@ GoRouter createAppRouter() => GoRouter(
           routes: [
             GoRoute(
               path: '/favorites',
-              builder: (context, state) => const FavoritesPlaceholder(),
+              builder: (context, state) => FavoritesScreen(
+                favoritesViewModel: favoritesViewModel,
+                baseUrl: baseUrl,
+              ),
             ),
           ],
         ),
@@ -48,7 +82,8 @@ GoRouter createAppRouter() => GoRouter(
           routes: [
             GoRoute(
               path: '/settings',
-              builder: (context, state) => const SettingsPlaceholder(),
+              builder: (context, state) =>
+                  SettingsScreen(settingsRepository: settingsRepository),
             ),
           ],
         ),
@@ -56,63 +91,29 @@ GoRouter createAppRouter() => GoRouter(
     ),
     GoRoute(
       path: '/player',
-      builder: (context, state) => const PlayerPlaceholder(),
+      builder: (context, state) {
+        final extra = state.extra;
+        if (extra is PlayerRouteData) {
+          return PlayerScreen(
+            playerViewModel: PlayerViewModel(
+              videoList: extra.videos,
+              startIndex: extra.startIndex,
+            ),
+            favoritesViewModel: favoritesViewModel,
+            baseUrl: baseUrl,
+          );
+        }
+        return const Scaffold(
+          body: Center(child: Text('No video data provided')),
+        );
+      },
     ),
   ],
 );
 
-class HistoryPlaceholder extends StatelessWidget {
-  const HistoryPlaceholder({super.key});
+class PlayerRouteData {
+  const PlayerRouteData({required this.videos, required this.startIndex});
 
-  @override
-  Widget build(BuildContext context) {
-    return const Scaffold(body: Center(child: Text('History')));
-  }
-}
-
-class CollectionsPlaceholder extends StatelessWidget {
-  const CollectionsPlaceholder({super.key});
-
-  @override
-  Widget build(BuildContext context) {
-    return const Scaffold(body: Center(child: Text('Collections')));
-  }
-}
-
-class CollectionDetailPlaceholder extends StatelessWidget {
-  const CollectionDetailPlaceholder({required this.name, super.key});
-
-  final String name;
-
-  @override
-  Widget build(BuildContext context) {
-    return Scaffold(body: Center(child: Text('Collection: $name')));
-  }
-}
-
-class FavoritesPlaceholder extends StatelessWidget {
-  const FavoritesPlaceholder({super.key});
-
-  @override
-  Widget build(BuildContext context) {
-    return const Scaffold(body: Center(child: Text('Favorites')));
-  }
-}
-
-class SettingsPlaceholder extends StatelessWidget {
-  const SettingsPlaceholder({super.key});
-
-  @override
-  Widget build(BuildContext context) {
-    return const Scaffold(body: Center(child: Text('Settings')));
-  }
-}
-
-class PlayerPlaceholder extends StatelessWidget {
-  const PlayerPlaceholder({super.key});
-
-  @override
-  Widget build(BuildContext context) {
-    return const Scaffold(body: Center(child: Text('Player')));
-  }
+  final List<VideoItem> videos;
+  final int startIndex;
 }

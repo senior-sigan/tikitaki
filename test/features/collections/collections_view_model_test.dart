@@ -35,8 +35,9 @@ void main() {
   setUp(() {
     mockRepository = MockVideoRepository();
     videoListViewModel = VideoListViewModel(repository: mockRepository);
-    collectionsViewModel =
-        CollectionsViewModel(videoListViewModel: videoListViewModel);
+    collectionsViewModel = CollectionsViewModel(
+      videoListViewModel: videoListViewModel,
+    );
   });
 
   tearDown(() {
@@ -46,8 +47,9 @@ void main() {
 
   group('CollectionsViewModel', () {
     test('collections returns grouped videos from loaded data', () async {
-      when(() => mockRepository.getVideos())
-          .thenAnswer((_) async => [catVideo1, catVideo2, dogVideo]);
+      when(
+        () => mockRepository.getVideos(),
+      ).thenAnswer((_) async => [catVideo1, catVideo2, dogVideo]);
 
       await videoListViewModel.load();
 
@@ -62,20 +64,23 @@ void main() {
       check(collections.keys.length).equals(0);
     });
 
-    test('collectionPreviews returns name and first video per collection',
-        () async {
-      when(() => mockRepository.getVideos())
-          .thenAnswer((_) async => [catVideo1, catVideo2, dogVideo]);
+    test(
+      'collectionPreviews returns name and first video per collection',
+      () async {
+        when(
+          () => mockRepository.getVideos(),
+        ).thenAnswer((_) async => [catVideo1, catVideo2, dogVideo]);
 
-      await videoListViewModel.load();
+        await videoListViewModel.load();
 
-      final previews = collectionsViewModel.collectionPreviews;
-      check(previews.length).equals(2);
-      check(previews[0].name).equals('cats');
-      check(previews[0].preview.url).equals('/media/cats/a.mp4');
-      check(previews[1].name).equals('dogs');
-      check(previews[1].preview.url).equals('/media/dogs/c.mp4');
-    });
+        final previews = collectionsViewModel.collectionPreviews;
+        check(previews.length).equals(2);
+        check(previews[0].name).equals('cats');
+        check(previews[0].preview.url).equals('/media/cats/a.mp4');
+        check(previews[1].name).equals('dogs');
+        check(previews[1].preview.url).equals('/media/dogs/c.mp4');
+      },
+    );
 
     test('notifies listeners when video list changes', () async {
       var notified = false;
@@ -83,8 +88,9 @@ void main() {
         notified = true;
       });
 
-      when(() => mockRepository.getVideos())
-          .thenAnswer((_) async => [catVideo1]);
+      when(
+        () => mockRepository.getVideos(),
+      ).thenAnswer((_) async => [catVideo1]);
 
       await videoListViewModel.load();
 

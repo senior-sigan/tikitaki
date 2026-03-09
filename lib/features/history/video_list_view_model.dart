@@ -7,7 +7,7 @@ enum VideoListState { initial, loading, loaded, error }
 
 class VideoListViewModel extends ChangeNotifier {
   VideoListViewModel({required VideoRepository repository})
-      : _repository = repository;
+    : _repository = repository;
 
   final VideoRepository _repository;
 

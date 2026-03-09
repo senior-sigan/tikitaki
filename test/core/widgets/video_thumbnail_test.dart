@@ -6,15 +6,14 @@ import 'package:tikitaki/core/widgets/video_thumbnail.dart';
 
 void main() {
   group('VideoThumbnail', () {
-    testWidgets('displays CachedNetworkImage with the passed thumbnail URL',
-        (tester) async {
+    testWidgets('displays CachedNetworkImage with the passed thumbnail URL', (
+      tester,
+    ) async {
       const url = 'https://example.com/thumb.jpg';
 
       await tester.pumpWidget(
         const MaterialApp(
-          home: Scaffold(
-            body: VideoThumbnail(thumbnailUrl: url),
-          ),
+          home: Scaffold(body: VideoThumbnail(thumbnailUrl: url)),
         ),
       );
 
@@ -30,9 +29,7 @@ void main() {
 
       await tester.pumpWidget(
         const MaterialApp(
-          home: Scaffold(
-            body: VideoThumbnail(thumbnailUrl: url),
-          ),
+          home: Scaffold(body: VideoThumbnail(thumbnailUrl: url)),
         ),
       );
 
@@ -48,9 +45,7 @@ void main() {
 
       await tester.pumpWidget(
         const MaterialApp(
-          home: Scaffold(
-            body: VideoThumbnail(thumbnailUrl: url),
-          ),
+          home: Scaffold(body: VideoThumbnail(thumbnailUrl: url)),
         ),
       );
 
@@ -66,9 +61,7 @@ void main() {
 
       await tester.pumpWidget(
         const MaterialApp(
-          home: Scaffold(
-            body: VideoThumbnail(thumbnailUrl: url),
-          ),
+          home: Scaffold(body: VideoThumbnail(thumbnailUrl: url)),
         ),
       );
 
@@ -84,9 +77,7 @@ void main() {
 
       await tester.pumpWidget(
         const MaterialApp(
-          home: Scaffold(
-            body: VideoThumbnail(thumbnailUrl: url),
-          ),
+          home: Scaffold(body: VideoThumbnail(thumbnailUrl: url)),
         ),
       );
 

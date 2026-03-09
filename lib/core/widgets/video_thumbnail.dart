@@ -13,12 +13,10 @@ class VideoThumbnail extends StatelessWidget {
       child: CachedNetworkImage(
         imageUrl: thumbnailUrl,
         fit: BoxFit.cover,
-        placeholder: (context, url) => const Center(
-          child: Icon(Icons.image, color: Colors.grey),
-        ),
-        errorWidget: (context, url, error) => const Center(
-          child: Icon(Icons.broken_image, color: Colors.grey),
-        ),
+        placeholder: (context, url) =>
+            const Center(child: Icon(Icons.image, color: Colors.grey)),
+        errorWidget: (context, url, error) =>
+            const Center(child: Icon(Icons.broken_image, color: Colors.grey)),
       ),
     );
   }

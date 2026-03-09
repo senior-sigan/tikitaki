@@ -12,11 +12,13 @@ void main() {
       repository = SharedPreferencesSettingsRepository();
     });
 
-    test('getBaseUrl returns default http://localhost:8080 if nothing saved',
-        () async {
-      final url = await repository.getBaseUrl();
-      check(url).equals('http://localhost:8080');
-    });
+    test(
+      'getBaseUrl returns default http://localhost:8080 if nothing saved',
+      () async {
+        final url = await repository.getBaseUrl();
+        check(url).equals('http://localhost:8080');
+      },
+    );
 
     test('setBaseUrl saves url and getBaseUrl returns it', () async {
       const newUrl = 'https://api.example.com';

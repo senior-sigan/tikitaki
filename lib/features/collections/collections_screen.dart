@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:go_router/go_router.dart';
 import 'package:tikitaki/core/url_utils.dart';
 import 'package:tikitaki/features/collections/collections_view_model.dart';
 
@@ -40,7 +41,13 @@ class CollectionsScreen extends StatelessWidget {
                 item.preview.thumbnailUrl,
               );
               return GestureDetector(
-                onTap: onCollectionTap,
+                onTap: () {
+                  if (onCollectionTap != null) {
+                    onCollectionTap?.call();
+                  } else {
+                    context.go('/collections/${item.name}');
+                  }
+                },
                 child: Card(
                   clipBehavior: Clip.antiAlias,
                   child: Column(
@@ -50,7 +57,7 @@ class CollectionsScreen extends StatelessWidget {
                         child: Image.network(
                           thumbnailUrl,
                           fit: BoxFit.cover,
-                          errorBuilder: (_, __, ___) =>
+                          errorBuilder: (_, _, _) =>
                               const Center(child: Icon(Icons.broken_image)),
                         ),
                       ),

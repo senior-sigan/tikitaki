@@ -14,6 +14,8 @@ class FakeVideoListViewModel extends ChangeNotifier
   VideoListState _state = VideoListState.initial;
   List<VideoItem> _videos = const [];
   String? _errorMessage;
+  int loadCallCount = 0;
+  int refreshCallCount = 0;
 
   @override
   VideoListState get state => _state;
@@ -38,10 +40,14 @@ class FakeVideoListViewModel extends ChangeNotifier
   }
 
   @override
-  Future<void> load() async {}
+  Future<void> load() async {
+    loadCallCount++;
+  }
 
   @override
-  Future<void> refresh() async {}
+  Future<void> refresh() async {
+    refreshCallCount++;
+  }
 }
 
 class FakeFavoritesViewModel extends ChangeNotifier
@@ -117,7 +123,6 @@ void main() {
       await tester.pumpWidget(buildSubject());
 
       expect(find.byType(GridView), findsOneWidget);
-      // Should show video names or thumbnails
       check(tester.widgetList(find.byType(GridView)).length).equals(1);
     });
 
@@ -128,6 +133,26 @@ void main() {
       await tester.pumpWidget(buildSubject());
 
       expect(find.textContaining('Network error'), findsOneWidget);
+    });
+
+    testWidgets('shows Retry button when state is error', (tester) async {
+      fakeVideoListVM.setErrorMessage('Network error');
+      fakeVideoListVM.setState(VideoListState.error);
+
+      await tester.pumpWidget(buildSubject());
+
+      expect(find.widgetWithText(ElevatedButton, 'Retry'), findsOneWidget);
+    });
+
+    testWidgets('tapping Retry calls viewModel.load()', (tester) async {
+      fakeVideoListVM.setErrorMessage('Network error');
+      fakeVideoListVM.setState(VideoListState.error);
+
+      await tester.pumpWidget(buildSubject());
+      await tester.tap(find.widgetWithText(ElevatedButton, 'Retry'));
+      await tester.pump();
+
+      check(fakeVideoListVM.loadCallCount).equals(1);
     });
 
     testWidgets('rebuilds when view model notifies listeners', (tester) async {
@@ -142,6 +167,15 @@ void main() {
 
       expect(find.byType(CircularProgressIndicator), findsNothing);
       expect(find.byType(GridView), findsOneWidget);
+    });
+
+    testWidgets('shows RefreshIndicator when state is loaded', (tester) async {
+      fakeVideoListVM.setVideos(_testVideos);
+      fakeVideoListVM.setState(VideoListState.loaded);
+
+      await tester.pumpWidget(buildSubject());
+
+      expect(find.byType(RefreshIndicator), findsOneWidget);
     });
   });
 }

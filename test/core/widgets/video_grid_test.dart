@@ -38,8 +38,9 @@ void main() {
       check(gridFinder.evaluate().length).equals(1);
     });
 
-    testWidgets('tapping a cell calls onVideoTap with correct index',
-        (tester) async {
+    testWidgets('tapping a cell calls onVideoTap with correct index', (
+      tester,
+    ) async {
       final videos = _createVideos(3);
       int? tappedIndex;
 
@@ -62,8 +63,9 @@ void main() {
       check(tappedIndex).equals(1);
     });
 
-    testWidgets('shows RefreshIndicator when onRefresh is provided',
-        (tester) async {
+    testWidgets('shows RefreshIndicator when onRefresh is provided', (
+      tester,
+    ) async {
       final videos = _createVideos(3);
 
       await tester.pumpWidget(
@@ -83,8 +85,9 @@ void main() {
       check(refreshFinder.evaluate().length).equals(1);
     });
 
-    testWidgets('does not show RefreshIndicator when onRefresh is null',
-        (tester) async {
+    testWidgets('does not show RefreshIndicator when onRefresh is null', (
+      tester,
+    ) async {
       final videos = _createVideos(3);
 
       await tester.pumpWidget(

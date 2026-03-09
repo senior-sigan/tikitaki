@@ -7,8 +7,8 @@ class FavoritesViewModel extends ChangeNotifier {
   FavoritesViewModel({
     required FavoritesRepository favoritesRepository,
     required VideoListViewModel videoListViewModel,
-  })  : _favoritesRepository = favoritesRepository,
-        _videoListViewModel = videoListViewModel {
+  }) : _favoritesRepository = favoritesRepository,
+       _videoListViewModel = videoListViewModel {
     _videoListViewModel.addListener(_onVideoListChanged);
   }
 
@@ -20,8 +20,7 @@ class FavoritesViewModel extends ChangeNotifier {
   }
 
   List<VideoItem> get favoriteVideos {
-    return _favoritesRepository
-        .getFavoriteVideos(_videoListViewModel.videos);
+    return _favoritesRepository.getFavoriteVideos(_videoListViewModel.videos);
   }
 
   bool isFavorite(String url) {
