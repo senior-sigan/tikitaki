@@ -2,7 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
 import 'package:tikitaki/core/app_router.dart';
 import 'package:tikitaki/features/favorites/favorites_view_model.dart';
-import 'package:tikitaki/features/shared/video_grid.dart';
+import 'package:tikitaki/core/widgets/video_grid.dart';
 
 class FavoritesScreen extends StatelessWidget {
   const FavoritesScreen({

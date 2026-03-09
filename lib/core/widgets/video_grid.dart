@@ -8,24 +8,33 @@ class VideoGrid extends StatelessWidget {
     super.key,
     required this.videos,
     required this.baseUrl,
-    required this.onVideoTap,
+    this.onVideoTap,
     this.onRefresh,
   });
 
   final List<VideoItem> videos;
   final String baseUrl;
-  final ValueChanged<int> onVideoTap;
+  final void Function(VideoItem video, int index)? onVideoTap;
   final Future<void> Function()? onRefresh;
 
   @override
   Widget build(BuildContext context) {
     final grid = GridView.builder(
+      padding: const EdgeInsets.all(8),
       gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
-        crossAxisCount: 3,
-        childAspectRatio: 1.0,
+        crossAxisCount: 2,
+        crossAxisSpacing: 8,
+        mainAxisSpacing: 8,
       ),
       itemCount: videos.length,
-      itemBuilder: _buildCell,
+      itemBuilder: (context, index) {
+        final video = videos[index];
+        return _VideoGridTile(
+          video: video,
+          baseUrl: baseUrl,
+          onTap: () => onVideoTap?.call(video, index),
+        );
+      },
     );
 
     final refresh = onRefresh;
@@ -34,13 +43,42 @@ class VideoGrid extends StatelessWidget {
     }
     return grid;
   }
+}
 
-  Widget _buildCell(BuildContext context, int index) {
-    final video = videos[index];
-    final url = resolveUrl(baseUrl, video.thumbnailUrl);
+class _VideoGridTile extends StatelessWidget {
+  const _VideoGridTile({
+    required this.video,
+    required this.baseUrl,
+    this.onTap,
+  });
+
+  final VideoItem video;
+  final String baseUrl;
+  final VoidCallback? onTap;
+
+  @override
+  Widget build(BuildContext context) {
+    final thumbnailUrl = resolveUrl(baseUrl, video.thumbnailUrl);
     return GestureDetector(
-      onTap: () => onVideoTap(index),
-      child: VideoThumbnail(thumbnailUrl: url),
+      onTap: onTap,
+      child: Card(
+        clipBehavior: Clip.antiAlias,
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.stretch,
+          children: [
+            Expanded(child: VideoThumbnail(thumbnailUrl: thumbnailUrl)),
+            Padding(
+              padding: const EdgeInsets.all(4),
+              child: Text(
+                video.name,
+                maxLines: 1,
+                overflow: TextOverflow.ellipsis,
+                style: Theme.of(context).textTheme.bodySmall,
+              ),
+            ),
+          ],
+        ),
+      ),
     );
   }
 }

@@ -14,14 +14,16 @@ class FakeVideoPlayerPlatform extends VideoPlayerPlatform {
   Future<int?> create(DataSource dataSource) async {
     final id = _nextId++;
     _eventControllers[id] = StreamController<VideoEvent>.broadcast();
-    // Emit initialized event immediately.
-    _eventControllers[id]?.add(
-      VideoEvent(
-        eventType: VideoEventType.initialized,
-        duration: const Duration(seconds: 10),
-        size: const Size(1080, 1920),
-      ),
-    );
+    // Emit initialized event on next microtask so the subscriber is attached.
+    Future.microtask(() {
+      _eventControllers[id]?.add(
+        VideoEvent(
+          eventType: VideoEventType.initialized,
+          duration: const Duration(seconds: 10),
+          size: const Size(1080, 1920),
+        ),
+      );
+    });
     return id;
   }
 

@@ -20,6 +20,7 @@ class VideoListViewModel extends ChangeNotifier {
   String? get errorMessage => _errorMessage;
 
   Future<void> load() async {
+    if (_state == VideoListState.loading) return;
     _state = VideoListState.loading;
     notifyListeners();
     try {
@@ -27,7 +28,7 @@ class VideoListViewModel extends ChangeNotifier {
       _videos = sortByCollection(result);
       _errorMessage = null;
       _state = VideoListState.loaded;
-    } on Exception catch (e) {
+    } catch (e) {
       _errorMessage = e.toString();
       _state = VideoListState.error;
     }

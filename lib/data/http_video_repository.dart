@@ -14,6 +14,9 @@ class HttpVideoRepository implements VideoRepository {
   @override
   Future<List<VideoItem>> getVideos() async {
     final response = await client.get(Uri.parse('$baseUrl/api'));
+    if (response.statusCode != 200) {
+      throw Exception('Server error: ${response.statusCode}');
+    }
     final json = jsonDecode(response.body) as Map<String, dynamic>;
     return ApiResponse.fromJson(json).items;
   }

@@ -1,3 +1,5 @@
+import 'dart:developer';
+
 import 'package:flutter/material.dart';
 import 'package:video_player/video_player.dart';
 
@@ -16,8 +18,9 @@ class VideoPage extends StatefulWidget {
 }
 
 class _VideoPageState extends State<VideoPage> {
-  late VideoPlayerController _controller;
+  VideoPlayerController? _controller;
   bool _isInitialized = false;
+  bool _hasError = false;
 
   @override
   void initState() {
@@ -26,43 +29,65 @@ class _VideoPageState extends State<VideoPage> {
   }
 
   Future<void> _initController() async {
-    _controller = VideoPlayerController.networkUrl(Uri.parse(widget.videoUrl));
-    _controller.addListener(_onVideoUpdate);
-    await _controller.initialize();
-    await _controller.setLooping(true);
-    await _controller.play();
-    if (mounted) {
-      setState(() {
-        _isInitialized = true;
-      });
+    try {
+      final controller = VideoPlayerController.networkUrl(
+        Uri.parse(widget.videoUrl),
+      );
+      _controller = controller;
+      controller.addListener(_onVideoUpdate);
+      await controller.initialize();
+      await controller.setLooping(true);
+      await controller.play();
+      if (mounted) {
+        setState(() {
+          _isInitialized = true;
+        });
+      }
+    } catch (e) {
+      log('Failed to initialize video: $e', name: 'VideoPage');
+      if (mounted) {
+        setState(() {
+          _hasError = true;
+        });
+      }
     }
   }
 
   void _onVideoUpdate() {
     if (!mounted) return;
-    final position = _controller.value.position;
-    final duration = _controller.value.duration;
+    final controller = _controller;
+    if (controller == null) return;
+    final position = controller.value.position;
+    final duration = controller.value.duration;
     widget.onProgressUpdate(position, duration);
   }
 
   void _togglePlayPause() {
-    if (_controller.value.isPlaying) {
-      _controller.pause();
+    final controller = _controller;
+    if (controller == null) return;
+    if (controller.value.isPlaying) {
+      controller.pause();
     } else {
-      _controller.play();
+      controller.play();
     }
   }
 
   @override
   void dispose() {
-    _controller.removeListener(_onVideoUpdate);
-    _controller.dispose();
+    _controller?.removeListener(_onVideoUpdate);
+    _controller?.dispose();
     super.dispose();
   }
 
   @override
   Widget build(BuildContext context) {
-    if (!_isInitialized) {
+    if (_hasError) {
+      return const Center(
+        child: Icon(Icons.error_outline, color: Colors.white, size: 48),
+      );
+    }
+    final controller = _controller;
+    if (!_isInitialized || controller == null) {
       return const Center(
         child: CircularProgressIndicator(color: Colors.white),
       );
@@ -71,8 +96,8 @@ class _VideoPageState extends State<VideoPage> {
       onTap: _togglePlayPause,
       child: Center(
         child: AspectRatio(
-          aspectRatio: _controller.value.aspectRatio,
-          child: VideoPlayer(_controller),
+          aspectRatio: controller.value.aspectRatio,
+          child: VideoPlayer(controller),
         ),
       ),
     );

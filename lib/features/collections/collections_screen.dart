@@ -13,7 +13,7 @@ class CollectionsScreen extends StatelessWidget {
 
   final CollectionsViewModel collectionsViewModel;
   final String baseUrl;
-  final VoidCallback? onCollectionTap;
+  final void Function(String collectionName)? onCollectionTap;
 
   @override
   Widget build(BuildContext context) {
@@ -42,8 +42,9 @@ class CollectionsScreen extends StatelessWidget {
               );
               return GestureDetector(
                 onTap: () {
-                  if (onCollectionTap != null) {
-                    onCollectionTap?.call();
+                  final callback = onCollectionTap;
+                  if (callback != null) {
+                    callback(item.name);
                   } else {
                     context.go('/collections/${item.name}');
                   }

@@ -35,7 +35,17 @@ class _SettingsScreenState extends State<SettingsScreen> {
   }
 
   Future<void> _save() async {
-    await widget.settingsRepository.setBaseUrl(_controller.text);
+    final text = _controller.text;
+    final uri = Uri.tryParse(text);
+    if (uri == null || !uri.hasScheme) {
+      if (mounted) {
+        ScaffoldMessenger.of(context).showSnackBar(
+          const SnackBar(content: Text('Please enter a valid URL with scheme')),
+        );
+      }
+      return;
+    }
+    await widget.settingsRepository.setBaseUrl(text);
     if (mounted) {
       ScaffoldMessenger.of(
         context,

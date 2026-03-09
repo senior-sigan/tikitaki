@@ -2,7 +2,6 @@ import 'package:checks/checks.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:tikitaki/core/widgets/video_grid.dart';
-import 'package:tikitaki/core/widgets/video_thumbnail.dart';
 import 'package:tikitaki/data/video_item.dart';
 
 List<VideoItem> _createVideos(int count) {
@@ -19,7 +18,7 @@ List<VideoItem> _createVideos(int count) {
 
 void main() {
   group('VideoGrid', () {
-    testWidgets('displays GridView with 3 columns', (tester) async {
+    testWidgets('displays GridView with 2 columns', (tester) async {
       final videos = _createVideos(6);
 
       await tester.pumpWidget(
@@ -28,7 +27,7 @@ void main() {
             body: VideoGrid(
               videos: videos,
               baseUrl: 'https://example.com',
-              onVideoTap: (_) {},
+              onVideoTap: (_, _) {},
             ),
           ),
         ),
@@ -38,11 +37,11 @@ void main() {
       check(gridFinder.evaluate().length).equals(1);
     });
 
-    testWidgets('tapping a cell calls onVideoTap with correct index', (
-      tester,
-    ) async {
+    testWidgets('tapping a cell calls onVideoTap with correct video and index',
+        (tester) async {
       final videos = _createVideos(3);
       int? tappedIndex;
+      VideoItem? tappedVideo;
 
       await tester.pumpWidget(
         MaterialApp(
@@ -50,17 +49,21 @@ void main() {
             body: VideoGrid(
               videos: videos,
               baseUrl: 'https://example.com',
-              onVideoTap: (index) => tappedIndex = index,
+              onVideoTap: (video, index) {
+                tappedVideo = video;
+                tappedIndex = index;
+              },
             ),
           ),
         ),
       );
 
-      // Tap the second thumbnail (index 1)
-      final thumbnails = find.byType(VideoThumbnail);
-      await tester.tap(thumbnails.at(1));
+      // Tap the second card (index 1)
+      final cards = find.byType(Card);
+      await tester.tap(cards.at(1));
 
       check(tappedIndex).equals(1);
+      check(tappedVideo?.name).equals('Video 1');
     });
 
     testWidgets('shows RefreshIndicator when onRefresh is provided', (
@@ -74,7 +77,7 @@ void main() {
             body: VideoGrid(
               videos: videos,
               baseUrl: 'https://example.com',
-              onVideoTap: (_) {},
+              onVideoTap: (_, _) {},
               onRefresh: () async {},
             ),
           ),
@@ -96,7 +99,7 @@ void main() {
             body: VideoGrid(
               videos: videos,
               baseUrl: 'https://example.com',
-              onVideoTap: (_) {},
+              onVideoTap: (_, _) {},
             ),
           ),
         ),
@@ -116,7 +119,7 @@ void main() {
             body: VideoGrid(
               videos: videos,
               baseUrl: 'https://example.com',
-              onVideoTap: (_) {},
+              onVideoTap: (_, _) {},
               onRefresh: () async {
                 refreshCalled = true;
               },

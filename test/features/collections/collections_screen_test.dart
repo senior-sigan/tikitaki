@@ -74,7 +74,7 @@ void main() {
     fakeCollectionsVM = FakeCollectionsViewModel();
   });
 
-  Widget buildSubject({VoidCallback? onCollectionTap}) {
+  Widget buildSubject({void Function(String)? onCollectionTap}) {
     return MaterialApp(
       home: CollectionsScreen(
         collectionsViewModel: fakeCollectionsVM,
@@ -107,8 +107,8 @@ void main() {
 
       await tester.pumpWidget(
         buildSubject(
-          onCollectionTap: () {
-            tappedCollection = 'cats';
+          onCollectionTap: (name) {
+            tappedCollection = name;
           },
         ),
       );

@@ -50,6 +50,14 @@ void main() {
       ).called(1);
     });
 
+    test('getVideos throws exception on non-200 status code', () async {
+      when(
+        () => mockClient.get(Uri.parse('http://localhost:8080/api')),
+      ).thenAnswer((_) async => http.Response('Not Found', 404));
+
+      await check(repository.getVideos()).throws<Exception>();
+    });
+
     test('getVideos throws exception on network error', () async {
       when(
         () => mockClient.get(Uri.parse('http://localhost:8080/api')),
