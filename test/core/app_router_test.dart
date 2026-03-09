@@ -144,11 +144,11 @@ void main() {
       },
     );
 
-    testWidgets('bottom navigation is visible on shell routes', (tester) async {
+    testWidgets('floating toolbar is visible on shell routes', (tester) async {
       await tester.pumpWidget(buildApp());
       await tester.pump();
 
-      check(find.byType(NavigationBar).evaluate().isNotEmpty).equals(true);
+      check(find.byType(IconButton).evaluate().length).equals(4);
     });
   });
 }

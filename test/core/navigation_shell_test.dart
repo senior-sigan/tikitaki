@@ -65,17 +65,14 @@ void main() {
       return MaterialApp.router(routerConfig: router, theme: appTheme);
     }
 
-    testWidgets('displays NavigationBar with 4 destinations', (tester) async {
+    testWidgets('displays floating toolbar with 4 icon buttons', (
+      tester,
+    ) async {
       await tester.pumpWidget(buildApp());
       await tester.pumpAndSettle();
 
-      final navBar = find.byType(NavigationBar);
-      check(navBar.evaluate().length).equals(1);
-
-      check(find.text('History').evaluate().isNotEmpty).equals(true);
-      check(find.text('Collections').evaluate().isNotEmpty).equals(true);
-      check(find.text('Favorites').evaluate().isNotEmpty).equals(true);
-      check(find.text('Settings').evaluate().isNotEmpty).equals(true);
+      final iconButtons = find.byType(IconButton);
+      check(iconButtons.evaluate().length).equals(4);
     });
 
     testWidgets('displays correct icons', (tester) async {
@@ -88,7 +85,7 @@ void main() {
       check(find.byIcon(Icons.settings).evaluate().isNotEmpty).equals(true);
     });
 
-    testWidgets('tapping Collections tab shows Collections screen', (
+    testWidgets('tapping Collections icon shows Collections screen', (
       tester,
     ) async {
       await tester.pumpWidget(buildApp());
@@ -97,32 +94,42 @@ void main() {
       // Initially shows History
       check(find.text('History').evaluate().isNotEmpty).equals(true);
 
-      // Tap Collections tab
-      await tester.tap(find.text('Collections'));
+      // Tap Collections icon
+      await tester.tap(find.byIcon(Icons.collections));
       await tester.pumpAndSettle();
 
       // Now Collections screen is visible
       check(find.text('Collections').evaluate().isNotEmpty).equals(true);
     });
 
-    testWidgets('tapping Favorites tab shows Favorites screen', (tester) async {
+    testWidgets('tapping Favorites icon shows Favorites screen', (
+      tester,
+    ) async {
       await tester.pumpWidget(buildApp());
       await tester.pumpAndSettle();
 
-      await tester.tap(find.text('Favorites'));
+      await tester.tap(find.byIcon(Icons.favorite));
       await tester.pumpAndSettle();
 
       check(find.text('Favorites').evaluate().isNotEmpty).equals(true);
     });
 
-    testWidgets('tapping Settings tab shows Settings screen', (tester) async {
+    testWidgets('tapping Settings icon shows Settings screen', (tester) async {
       await tester.pumpWidget(buildApp());
       await tester.pumpAndSettle();
 
-      await tester.tap(find.text('Settings'));
+      await tester.tap(find.byIcon(Icons.settings));
       await tester.pumpAndSettle();
 
       check(find.text('Settings').evaluate().isNotEmpty).equals(true);
+    });
+
+    testWidgets('toolbar has no text labels', (tester) async {
+      await tester.pumpWidget(buildApp());
+      await tester.pumpAndSettle();
+
+      // No NavigationBar or NavigationDestination widgets
+      check(find.byType(NavigationBar).evaluate().isEmpty).equals(true);
     });
   });
 }

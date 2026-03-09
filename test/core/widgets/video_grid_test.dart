@@ -37,34 +37,36 @@ void main() {
       check(gridFinder.evaluate().length).equals(1);
     });
 
-    testWidgets('tapping a cell calls onVideoTap with correct video and index',
-        (tester) async {
-      final videos = _createVideos(3);
-      int? tappedIndex;
-      VideoItem? tappedVideo;
+    testWidgets(
+      'tapping a cell calls onVideoTap with correct video and index',
+      (tester) async {
+        final videos = _createVideos(3);
+        int? tappedIndex;
+        VideoItem? tappedVideo;
 
-      await tester.pumpWidget(
-        MaterialApp(
-          home: Scaffold(
-            body: VideoGrid(
-              videos: videos,
-              baseUrl: 'https://example.com',
-              onVideoTap: (video, index) {
-                tappedVideo = video;
-                tappedIndex = index;
-              },
+        await tester.pumpWidget(
+          MaterialApp(
+            home: Scaffold(
+              body: VideoGrid(
+                videos: videos,
+                baseUrl: 'https://example.com',
+                onVideoTap: (video, index) {
+                  tappedVideo = video;
+                  tappedIndex = index;
+                },
+              ),
             ),
           ),
-        ),
-      );
+        );
 
-      // Tap the second card (index 1)
-      final cards = find.byType(Card);
-      await tester.tap(cards.at(1));
+        // Tap the second card (index 1)
+        final cards = find.byType(Card);
+        await tester.tap(cards.at(1));
 
-      check(tappedIndex).equals(1);
-      check(tappedVideo?.name).equals('Video 1');
-    });
+        check(tappedIndex).equals(1);
+        check(tappedVideo?.name).equals('Video 1');
+      },
+    );
 
     testWidgets('shows RefreshIndicator when onRefresh is provided', (
       tester,

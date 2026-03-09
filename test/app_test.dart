@@ -75,24 +75,24 @@ void main() {
       check(materialApp.debugShowCheckedModeBanner).equals(false);
     });
 
-    testWidgets('has bottom navigation bar with 4 tabs', (tester) async {
+    testWidgets('has floating toolbar with 4 icon buttons', (tester) async {
       await tester.pumpWidget(buildSubject());
       await tester.pump();
 
-      final navBar = find.byType(NavigationBar);
-      check(navBar.evaluate().length).equals(1);
+      final iconButtons = find.byType(IconButton);
+      check(iconButtons.evaluate().length).equals(4);
 
-      check(find.text('History').evaluate().isNotEmpty).equals(true);
-      check(find.text('Collections').evaluate().isNotEmpty).equals(true);
-      check(find.text('Favorites').evaluate().isNotEmpty).equals(true);
-      check(find.text('Settings').evaluate().isNotEmpty).equals(true);
+      check(find.byIcon(Icons.history).evaluate().isNotEmpty).equals(true);
+      check(find.byIcon(Icons.collections).evaluate().isNotEmpty).equals(true);
+      check(find.byIcon(Icons.favorite).evaluate().isNotEmpty).equals(true);
+      check(find.byIcon(Icons.settings).evaluate().isNotEmpty).equals(true);
     });
 
     testWidgets('uses dark brightness in theme', (tester) async {
       await tester.pumpWidget(buildSubject());
       await tester.pump();
 
-      final context = tester.element(find.byType(NavigationBar));
+      final context = tester.element(find.byType(IconButton).first);
       final theme = Theme.of(context);
       check(theme.brightness).equals(Brightness.dark);
     });
@@ -103,7 +103,7 @@ void main() {
 
       // History screen shows AppBar with "History" title
       expect(find.byType(AppBar), findsOneWidget);
-      // The History text appears in both the AppBar and the NavigationBar
+      // The History text appears in the AppBar
       check(find.text('History').evaluate().length).isGreaterOrEqual(1);
     });
   });
