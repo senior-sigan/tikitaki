@@ -24,8 +24,10 @@ class PlayerScreen extends StatefulWidget {
 
 class _PlayerScreenState extends State<PlayerScreen> {
   late final PageController _pageController;
-  Duration _position = Duration.zero;
-  Duration _duration = Duration.zero;
+  final ValueNotifier<(Duration, Duration)> _progressNotifier = ValueNotifier((
+    Duration.zero,
+    Duration.zero,
+  ));
 
   @override
   void initState() {
@@ -33,35 +35,18 @@ class _PlayerScreenState extends State<PlayerScreen> {
     _pageController = PageController(
       initialPage: widget.playerViewModel.currentIndex,
     );
-    widget.favoritesViewModel.addListener(_onFavoritesChanged);
   }
 
   @override
   void dispose() {
-    widget.favoritesViewModel.removeListener(_onFavoritesChanged);
+    _progressNotifier.dispose();
     _pageController.dispose();
     super.dispose();
   }
 
-  void _onFavoritesChanged() {
-    if (mounted) setState(() {});
-  }
-
   void _onPageChanged(int index) {
     widget.playerViewModel.jumpToIndex(index);
-    setState(() {
-      _position = Duration.zero;
-      _duration = Duration.zero;
-    });
-  }
-
-  void _onProgressUpdate(Duration position, Duration duration) {
-    if (mounted) {
-      setState(() {
-        _position = position;
-        _duration = duration;
-      });
-    }
+    _progressNotifier.value = (Duration.zero, Duration.zero);
   }
 
   String _resolveVideoUrl(String relativePath) {
@@ -71,8 +56,6 @@ class _PlayerScreenState extends State<PlayerScreen> {
   @override
   Widget build(BuildContext context) {
     final videos = widget.playerViewModel.videoList;
-    final currentVideo = widget.playerViewModel.currentVideo;
-    final isFav = widget.favoritesViewModel.isFavorite(currentVideo.url);
 
     return Scaffold(
       backgroundColor: Colors.black,
@@ -80,7 +63,7 @@ class _PlayerScreenState extends State<PlayerScreen> {
         children: [
           _buildPageView(videos),
           _buildBackButton(context),
-          _buildLikeButton(isFav, currentVideo.url),
+          _buildLikeButton(),
           _buildProgressBar(),
         ],
       ),
@@ -97,7 +80,7 @@ class _PlayerScreenState extends State<PlayerScreen> {
         final videoUrl = _resolveVideoUrl(videos[index].url);
         return VideoPage(
           videoUrl: videoUrl,
-          onProgressUpdate: _onProgressUpdate,
+          progressNotifier: _progressNotifier,
         );
       },
     );
@@ -114,13 +97,20 @@ class _PlayerScreenState extends State<PlayerScreen> {
     );
   }
 
-  Widget _buildLikeButton(bool isFav, String videoUrl) {
+  Widget _buildLikeButton() {
     return Positioned(
       right: 16,
       bottom: 120,
-      child: LikeButton(
-        isFavorite: isFav,
-        onToggle: () => widget.favoritesViewModel.toggle(videoUrl),
+      child: ListenableBuilder(
+        listenable: widget.favoritesViewModel,
+        builder: (context, _) {
+          final currentVideo = widget.playerViewModel.currentVideo;
+          final isFav = widget.favoritesViewModel.isFavorite(currentVideo.url);
+          return LikeButton(
+            isFavorite: isFav,
+            onToggle: () => widget.favoritesViewModel.toggle(currentVideo.url),
+          );
+        },
       ),
     );
   }
@@ -130,7 +120,12 @@ class _PlayerScreenState extends State<PlayerScreen> {
       left: 0,
       right: 0,
       bottom: 0,
-      child: VideoProgressBar(position: _position, duration: _duration),
+      child: ValueListenableBuilder<(Duration, Duration)>(
+        valueListenable: _progressNotifier,
+        builder: (context, progress, _) {
+          return VideoProgressBar(position: progress.$1, duration: progress.$2);
+        },
+      ),
     );
   }
 }

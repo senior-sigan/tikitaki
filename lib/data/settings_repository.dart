@@ -6,18 +6,20 @@ abstract class SettingsRepository {
 }
 
 class SharedPreferencesSettingsRepository implements SettingsRepository {
+  SharedPreferencesSettingsRepository(this._prefs);
+
   static const _baseUrlKey = 'base_url';
   static const defaultBaseUrl = 'http://localhost:8080';
 
+  final SharedPreferences _prefs;
+
   @override
   Future<String> getBaseUrl() async {
-    final prefs = await SharedPreferences.getInstance();
-    return prefs.getString(_baseUrlKey) ?? defaultBaseUrl;
+    return _prefs.getString(_baseUrlKey) ?? defaultBaseUrl;
   }
 
   @override
   Future<void> setBaseUrl(String url) async {
-    final prefs = await SharedPreferences.getInstance();
-    await prefs.setString(_baseUrlKey, url);
+    await _prefs.setString(_baseUrlKey, url);
   }
 }

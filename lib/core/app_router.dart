@@ -48,7 +48,6 @@ GoRouter createAppRouter({
               builder: (context, state) => CollectionsScreen(
                 collectionsViewModel: collectionsViewModel,
                 baseUrl: baseUrl,
-                onCollectionTap: null,
               ),
               routes: [
                 GoRoute(

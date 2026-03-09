@@ -14,8 +14,10 @@ class FavoritesViewModel extends ChangeNotifier {
 
   final FavoritesRepository _favoritesRepository;
   final VideoListViewModel _videoListViewModel;
+  bool _disposed = false;
 
   void _onVideoListChanged() {
+    if (_videoListViewModel.state != VideoListState.loaded) return;
     notifyListeners();
   }
 
@@ -33,7 +35,14 @@ class FavoritesViewModel extends ChangeNotifier {
   }
 
   @override
+  void notifyListeners() {
+    if (_disposed) return;
+    super.notifyListeners();
+  }
+
+  @override
   void dispose() {
+    _disposed = true;
     _videoListViewModel.removeListener(_onVideoListChanged);
     super.dispose();
   }

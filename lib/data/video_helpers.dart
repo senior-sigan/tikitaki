@@ -13,8 +13,3 @@ Map<String, List<VideoItem>> groupByCollection(List<VideoItem> videos) {
   }
   return map;
 }
-
-List<VideoItem> getCollectionPreviews(List<VideoItem> videos) {
-  final grouped = groupByCollection(videos);
-  return grouped.values.map((list) => list.first).toList();
-}

@@ -47,9 +47,11 @@ class _SettingsScreenState extends State<SettingsScreen> {
     }
     await widget.settingsRepository.setBaseUrl(text);
     if (mounted) {
-      ScaffoldMessenger.of(
-        context,
-      ).showSnackBar(const SnackBar(content: Text('Settings saved')));
+      ScaffoldMessenger.of(context).showSnackBar(
+        const SnackBar(
+          content: Text('Settings saved. Restart app to apply new URL.'),
+        ),
+      );
     }
   }
 

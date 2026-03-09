@@ -51,7 +51,9 @@ void main() {
       verify(() => mockSettingsRepo.setBaseUrl('http://new-url.com')).called(1);
     });
 
-    testWidgets('shows snackbar confirmation after save', (tester) async {
+    testWidgets('shows snackbar with restart message after save', (
+      tester,
+    ) async {
       when(
         () => mockSettingsRepo.getBaseUrl(),
       ).thenAnswer((_) async => 'http://example.com');
@@ -65,6 +67,7 @@ void main() {
 
       expect(find.byType(SnackBar), findsOneWidget);
       expect(find.textContaining('saved'), findsOneWidget);
+      expect(find.textContaining('Restart'), findsOneWidget);
     });
   });
 }

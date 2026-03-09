@@ -15,7 +15,7 @@ Future<void> main() async {
 
   final prefs = await SharedPreferences.getInstance();
 
-  final settingsRepository = SharedPreferencesSettingsRepository();
+  final settingsRepository = SharedPreferencesSettingsRepository(prefs);
   final baseUrl = await settingsRepository.getBaseUrl();
 
   final client = http.Client();

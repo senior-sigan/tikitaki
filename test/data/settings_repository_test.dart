@@ -7,9 +7,10 @@ void main() {
   group('SharedPreferencesSettingsRepository', () {
     late SharedPreferencesSettingsRepository repository;
 
-    setUp(() {
+    setUp(() async {
       SharedPreferences.setMockInitialValues({});
-      repository = SharedPreferencesSettingsRepository();
+      final prefs = await SharedPreferences.getInstance();
+      repository = SharedPreferencesSettingsRepository(prefs);
     });
 
     test(

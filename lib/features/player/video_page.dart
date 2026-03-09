@@ -8,11 +8,11 @@ class VideoPage extends StatefulWidget {
   const VideoPage({
     super.key,
     required this.videoUrl,
-    required this.onProgressUpdate,
+    required this.progressNotifier,
   });
 
   final String videoUrl;
-  final void Function(Duration position, Duration duration) onProgressUpdate;
+  final ValueNotifier<(Duration, Duration)> progressNotifier;
 
   @override
   State<VideoPage> createState() => _VideoPageState();
@@ -61,7 +61,7 @@ class _VideoPageState extends State<VideoPage> {
     if (controller == null) return;
     final position = controller.value.position;
     final duration = controller.value.duration;
-    widget.onProgressUpdate(position, duration);
+    widget.progressNotifier.value = (position, duration);
   }
 
   void _togglePlayPause() {

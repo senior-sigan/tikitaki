@@ -9,17 +9,15 @@ class VideoGrid extends StatelessWidget {
     required this.videos,
     required this.baseUrl,
     this.onVideoTap,
-    this.onRefresh,
   });
 
   final List<VideoItem> videos;
   final String baseUrl;
   final void Function(VideoItem video, int index)? onVideoTap;
-  final Future<void> Function()? onRefresh;
 
   @override
   Widget build(BuildContext context) {
-    final grid = GridView.builder(
+    return GridView.builder(
       padding: const EdgeInsets.all(8),
       gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
         crossAxisCount: 3,
@@ -37,12 +35,6 @@ class VideoGrid extends StatelessWidget {
         );
       },
     );
-
-    final refresh = onRefresh;
-    if (refresh != null) {
-      return RefreshIndicator(onRefresh: refresh, child: grid);
-    }
-    return grid;
   }
 }
 

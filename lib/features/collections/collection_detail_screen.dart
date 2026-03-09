@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
 import 'package:tikitaki/core/app_router.dart';
+import 'package:tikitaki/core/widgets/app_scaffold.dart';
 import 'package:tikitaki/features/collections/collections_view_model.dart';
 import 'package:tikitaki/features/favorites/favorites_view_model.dart';
 import 'package:tikitaki/core/widgets/video_grid.dart';
@@ -21,35 +22,26 @@ class CollectionDetailScreen extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
-      body: NestedScrollView(
-        headerSliverBuilder: (context, innerBoxIsScrolled) => [
-          SliverAppBar(
-            floating: true,
-            snap: true,
-            title: Text(collectionName),
-            forceElevated: innerBoxIsScrolled,
-          ),
-        ],
-        body: ListenableBuilder(
-          listenable: collectionsViewModel,
-          builder: (context, _) {
-            final videos = collectionsViewModel.collections[collectionName];
-            if (videos == null || videos.isEmpty) {
-              return const Center(child: Text('No videos in this collection'));
-            }
-            return VideoGrid(
-              videos: videos,
-              baseUrl: baseUrl,
-              onVideoTap: (video, index) {
-                context.push(
-                  '/player',
-                  extra: PlayerRouteData(videos: videos, startIndex: index),
-                );
-              },
-            );
-          },
-        ),
+    return AppScaffold(
+      title: collectionName,
+      body: ListenableBuilder(
+        listenable: collectionsViewModel,
+        builder: (context, _) {
+          final videos = collectionsViewModel.collections[collectionName];
+          if (videos == null || videos.isEmpty) {
+            return const Center(child: Text('No videos in this collection'));
+          }
+          return VideoGrid(
+            videos: videos,
+            baseUrl: baseUrl,
+            onVideoTap: (video, index) {
+              context.push(
+                '/player',
+                extra: PlayerRouteData(videos: videos, startIndex: index),
+              );
+            },
+          );
+        },
       ),
     );
   }

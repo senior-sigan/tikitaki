@@ -66,22 +66,4 @@ void main() {
       check(grouped.keys.length).equals(0);
     });
   });
-
-  group('getCollectionPreviews', () {
-    test('returns first video item for each collection', () {
-      final videos = [catVideo1, catVideo2, dogVideo];
-
-      final previews = getCollectionPreviews(videos);
-
-      check(previews.length).equals(2);
-      check(previews[0].url).equals('/media/cats/a.mp4');
-      check(previews[1].url).equals('/media/dogs/c.mp4');
-    });
-
-    test('returns empty list for empty input', () {
-      final previews = getCollectionPreviews([]);
-
-      check(previews.length).equals(0);
-    });
-  });
 }
