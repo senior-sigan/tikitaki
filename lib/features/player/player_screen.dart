@@ -1,7 +1,9 @@
 import 'package:flutter/material.dart';
 import 'package:tikitaki/core/url_utils.dart';
 import 'package:tikitaki/features/favorites/favorites_view_model.dart';
+import 'package:tikitaki/data/video_item.dart';
 import 'package:tikitaki/features/player/like_button.dart';
+import 'package:tikitaki/features/player/next_video_preview.dart';
 import 'package:tikitaki/features/player/player_view_model.dart';
 import 'package:tikitaki/features/player/video_page.dart';
 import 'package:tikitaki/features/player/video_progress_bar.dart';
@@ -70,19 +72,44 @@ class _PlayerScreenState extends State<PlayerScreen> {
     );
   }
 
-  Widget _buildPageView(List videos) {
-    return PageView.builder(
-      controller: _pageController,
-      scrollDirection: Axis.vertical,
-      itemCount: videos.length,
-      onPageChanged: _onPageChanged,
-      itemBuilder: (context, index) {
-        final videoUrl = _resolveVideoUrl(videos[index].url);
-        return VideoPage(
-          videoUrl: videoUrl,
-          progressNotifier: _progressNotifier,
-        );
-      },
+  Widget _buildPageView(List<VideoItem> videos) {
+    return Stack(
+      children: [
+        PageView.builder(
+          controller: _pageController,
+          scrollDirection: Axis.vertical,
+          itemCount: videos.length,
+          onPageChanged: _onPageChanged,
+          itemBuilder: (context, index) {
+            final videoUrl = _resolveVideoUrl(videos[index].url);
+            return VideoPage(
+              videoUrl: videoUrl,
+              progressNotifier: _progressNotifier,
+            );
+          },
+        ),
+        ListenableBuilder(
+          listenable: widget.playerViewModel,
+          builder: (context, _) {
+            final vm = widget.playerViewModel;
+            if (!vm.hasNext) return const SizedBox.shrink();
+            final nextThumbnailUrl = resolveUrl(
+              widget.baseUrl,
+              vm.videoList[vm.currentIndex + 1].thumbnailUrl,
+            );
+            return Positioned(
+              left: 0,
+              right: 0,
+              bottom: 0,
+              child: NextVideoPreview(
+                pageController: _pageController,
+                nextThumbnailUrl: nextThumbnailUrl,
+                currentIndex: vm.currentIndex,
+              ),
+            );
+          },
+        ),
+      ],
     );
   }
 

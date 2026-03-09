@@ -8,6 +8,7 @@ import 'package:tikitaki/data/video_repository.dart';
 import 'package:tikitaki/features/favorites/favorites_view_model.dart';
 import 'package:tikitaki/features/history/video_list_view_model.dart';
 import 'package:tikitaki/features/player/like_button.dart';
+import 'package:tikitaki/features/player/next_video_preview.dart';
 import 'package:tikitaki/features/player/player_screen.dart';
 import 'package:tikitaki/features/player/player_view_model.dart';
 import 'package:tikitaki/features/player/video_progress_bar.dart';
@@ -118,6 +119,22 @@ void main() {
 
       final pageView = tester.widget<PageView>(find.byType(PageView));
       check(pageView.scrollDirection).equals(Axis.vertical);
+    });
+
+    testWidgets('shows NextVideoPreview when hasNext is true', (tester) async {
+      await tester.pumpWidget(buildSubject());
+      await tester.pump();
+
+      check(find.byType(NextVideoPreview).evaluate().length).equals(1);
+    });
+
+    testWidgets('hides NextVideoPreview when on last video', (tester) async {
+      playerViewModel.dispose();
+      playerViewModel = PlayerViewModel(videoList: _testVideos, startIndex: 1);
+      await tester.pumpWidget(buildSubject());
+      await tester.pump();
+
+      check(find.byType(NextVideoPreview).evaluate().length).equals(0);
     });
   });
 }
