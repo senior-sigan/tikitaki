@@ -24,5 +24,77 @@ void main() {
       final widget = tester.widget<CachedNetworkImage>(finder);
       check(widget.imageUrl).equals(url);
     });
+
+    testWidgets('shows placeholder icon while loading', (tester) async {
+      const url = 'https://example.com/thumb.jpg';
+
+      await tester.pumpWidget(
+        const MaterialApp(
+          home: Scaffold(
+            body: VideoThumbnail(thumbnailUrl: url),
+          ),
+        ),
+      );
+
+      final widget = tester.widget<CachedNetworkImage>(
+        find.byType(CachedNetworkImage),
+      );
+
+      check(widget.placeholder).isNotNull();
+    });
+
+    testWidgets('shows error icon on failure', (tester) async {
+      const url = 'https://example.com/thumb.jpg';
+
+      await tester.pumpWidget(
+        const MaterialApp(
+          home: Scaffold(
+            body: VideoThumbnail(thumbnailUrl: url),
+          ),
+        ),
+      );
+
+      final widget = tester.widget<CachedNetworkImage>(
+        find.byType(CachedNetworkImage),
+      );
+
+      check(widget.errorWidget).isNotNull();
+    });
+
+    testWidgets('uses BoxFit.cover', (tester) async {
+      const url = 'https://example.com/thumb.jpg';
+
+      await tester.pumpWidget(
+        const MaterialApp(
+          home: Scaffold(
+            body: VideoThumbnail(thumbnailUrl: url),
+          ),
+        ),
+      );
+
+      final widget = tester.widget<CachedNetworkImage>(
+        find.byType(CachedNetworkImage),
+      );
+
+      check(widget.fit).equals(BoxFit.cover);
+    });
+
+    testWidgets('is wrapped in ClipRRect with border radius', (tester) async {
+      const url = 'https://example.com/thumb.jpg';
+
+      await tester.pumpWidget(
+        const MaterialApp(
+          home: Scaffold(
+            body: VideoThumbnail(thumbnailUrl: url),
+          ),
+        ),
+      );
+
+      final clipFinder = find.byType(ClipRRect);
+      check(clipFinder.evaluate().length).equals(1);
+
+      final clip = tester.widget<ClipRRect>(clipFinder);
+      check(clip.borderRadius).isNotNull();
+    });
   });
 }

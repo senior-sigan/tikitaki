@@ -27,29 +27,20 @@ void main() {
 
   group('PlayerViewModel', () {
     test('init with videoList and startIndex returns correct currentVideo', () {
-      final viewModel = PlayerViewModel(
-        videoList: allVideos,
-        startIndex: 1,
-      );
+      final viewModel = PlayerViewModel(videoList: allVideos, startIndex: 1);
 
       check(viewModel.currentVideo.url).equals('/media/dogs/b.mp4');
       check(viewModel.currentIndex).equals(1);
     });
 
     test('videoList returns the provided list', () {
-      final viewModel = PlayerViewModel(
-        videoList: allVideos,
-        startIndex: 0,
-      );
+      final viewModel = PlayerViewModel(videoList: allVideos, startIndex: 0);
 
       check(viewModel.videoList.length).equals(3);
     });
 
     test('next goes to next video', () {
-      final viewModel = PlayerViewModel(
-        videoList: allVideos,
-        startIndex: 0,
-      );
+      final viewModel = PlayerViewModel(videoList: allVideos, startIndex: 0);
 
       viewModel.next();
 
@@ -58,10 +49,7 @@ void main() {
     });
 
     test('next stays on last video when already at end', () {
-      final viewModel = PlayerViewModel(
-        videoList: allVideos,
-        startIndex: 2,
-      );
+      final viewModel = PlayerViewModel(videoList: allVideos, startIndex: 2);
 
       viewModel.next();
 
@@ -70,10 +58,7 @@ void main() {
     });
 
     test('previous goes to previous video', () {
-      final viewModel = PlayerViewModel(
-        videoList: allVideos,
-        startIndex: 2,
-      );
+      final viewModel = PlayerViewModel(videoList: allVideos, startIndex: 2);
 
       viewModel.previous();
 
@@ -82,10 +67,7 @@ void main() {
     });
 
     test('previous stays on first video when already at start', () {
-      final viewModel = PlayerViewModel(
-        videoList: allVideos,
-        startIndex: 0,
-      );
+      final viewModel = PlayerViewModel(videoList: allVideos, startIndex: 0);
 
       viewModel.previous();
 
@@ -94,46 +76,31 @@ void main() {
     });
 
     test('hasNext returns true when not at last video', () {
-      final viewModel = PlayerViewModel(
-        videoList: allVideos,
-        startIndex: 0,
-      );
+      final viewModel = PlayerViewModel(videoList: allVideos, startIndex: 0);
 
       check(viewModel.hasNext).equals(true);
     });
 
     test('hasNext returns false when at last video', () {
-      final viewModel = PlayerViewModel(
-        videoList: allVideos,
-        startIndex: 2,
-      );
+      final viewModel = PlayerViewModel(videoList: allVideos, startIndex: 2);
 
       check(viewModel.hasNext).equals(false);
     });
 
     test('hasPrevious returns true when not at first video', () {
-      final viewModel = PlayerViewModel(
-        videoList: allVideos,
-        startIndex: 1,
-      );
+      final viewModel = PlayerViewModel(videoList: allVideos, startIndex: 1);
 
       check(viewModel.hasPrevious).equals(true);
     });
 
     test('hasPrevious returns false when at first video', () {
-      final viewModel = PlayerViewModel(
-        videoList: allVideos,
-        startIndex: 0,
-      );
+      final viewModel = PlayerViewModel(videoList: allVideos, startIndex: 0);
 
       check(viewModel.hasPrevious).equals(false);
     });
 
     test('next notifies listeners', () {
-      final viewModel = PlayerViewModel(
-        videoList: allVideos,
-        startIndex: 0,
-      );
+      final viewModel = PlayerViewModel(videoList: allVideos, startIndex: 0);
 
       var notified = false;
       viewModel.addListener(() {
@@ -146,10 +113,7 @@ void main() {
     });
 
     test('previous notifies listeners', () {
-      final viewModel = PlayerViewModel(
-        videoList: allVideos,
-        startIndex: 2,
-      );
+      final viewModel = PlayerViewModel(videoList: allVideos, startIndex: 2);
 
       var notified = false;
       viewModel.addListener(() {
@@ -172,10 +136,7 @@ void main() {
         ),
       ];
 
-      final viewModel = PlayerViewModel(
-        videoList: catVideos,
-        startIndex: 0,
-      );
+      final viewModel = PlayerViewModel(videoList: catVideos, startIndex: 0);
 
       viewModel.next();
       check(viewModel.currentIndex).equals(1);
@@ -183,6 +144,35 @@ void main() {
       viewModel.next();
       check(viewModel.currentIndex).equals(1);
       check(viewModel.videoList.length).equals(2);
+    });
+
+    test('jumpToIndex sets current index and notifies listeners', () {
+      final viewModel = PlayerViewModel(videoList: allVideos, startIndex: 0);
+
+      var notified = false;
+      viewModel.addListener(() {
+        notified = true;
+      });
+
+      viewModel.jumpToIndex(2);
+
+      check(viewModel.currentIndex).equals(2);
+      check(viewModel.currentVideo.url).equals('/media/zebras/c.mp4');
+      check(notified).equals(true);
+    });
+
+    test('jumpToIndex does nothing for out of range index', () {
+      final viewModel = PlayerViewModel(videoList: allVideos, startIndex: 1);
+
+      var notified = false;
+      viewModel.addListener(() {
+        notified = true;
+      });
+
+      viewModel.jumpToIndex(5);
+
+      check(viewModel.currentIndex).equals(1);
+      check(notified).equals(false);
     });
   });
 }

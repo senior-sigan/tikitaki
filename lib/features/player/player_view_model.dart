@@ -2,11 +2,9 @@ import 'package:flutter/foundation.dart';
 import 'package:tikitaki/data/video_item.dart';
 
 class PlayerViewModel extends ChangeNotifier {
-  PlayerViewModel({
-    required List<VideoItem> videoList,
-    required int startIndex,
-  })  : _videoList = List.unmodifiable(videoList),
-        _currentIndex = startIndex;
+  PlayerViewModel({required List<VideoItem> videoList, required int startIndex})
+    : _videoList = List.unmodifiable(videoList),
+      _currentIndex = startIndex;
 
   final List<VideoItem> _videoList;
   int _currentIndex;
@@ -30,5 +28,11 @@ class PlayerViewModel extends ChangeNotifier {
       _currentIndex--;
       notifyListeners();
     }
+  }
+
+  void jumpToIndex(int index) {
+    if (index < 0 || index >= _videoList.length) return;
+    _currentIndex = index;
+    notifyListeners();
   }
 }

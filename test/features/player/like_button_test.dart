@@ -8,9 +8,7 @@ void main() {
     testWidgets('shows filled heart icon when favorited', (tester) async {
       await tester.pumpWidget(
         const MaterialApp(
-          home: Scaffold(
-            body: LikeButton(isFavorite: true, onToggle: _noop),
-          ),
+          home: Scaffold(body: LikeButton(isFavorite: true, onToggle: _noop)),
         ),
       );
 
@@ -21,9 +19,7 @@ void main() {
     testWidgets('shows outlined heart icon when not favorited', (tester) async {
       await tester.pumpWidget(
         const MaterialApp(
-          home: Scaffold(
-            body: LikeButton(isFavorite: false, onToggle: _noop),
-          ),
+          home: Scaffold(body: LikeButton(isFavorite: false, onToggle: _noop)),
         ),
       );
 
@@ -37,10 +33,7 @@ void main() {
       await tester.pumpWidget(
         MaterialApp(
           home: Scaffold(
-            body: LikeButton(
-              isFavorite: false,
-              onToggle: () => toggled = true,
-            ),
+            body: LikeButton(isFavorite: false, onToggle: () => toggled = true),
           ),
         ),
       );
