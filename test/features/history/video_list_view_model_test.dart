@@ -79,15 +79,15 @@ void main() {
       },
     );
 
-    test('videos getter returns list sorted by collection', () async {
+    test('load preserves original API order of videos', () async {
       when(
         () => mockRepository.getVideos(),
-      ).thenAnswer((_) async => [zebraVideo, catVideo, dogVideo]);
+      ).thenAnswer((_) async => [dogVideo, catVideo, zebraVideo]);
 
       await viewModel.load();
 
-      check(viewModel.videos[0].collection).equals('cats');
-      check(viewModel.videos[1].collection).equals('dogs');
+      check(viewModel.videos[0].collection).equals('dogs');
+      check(viewModel.videos[1].collection).equals('cats');
       check(viewModel.videos[2].collection).equals('zebras');
     });
 

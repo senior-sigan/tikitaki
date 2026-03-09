@@ -1,5 +1,4 @@
 import 'package:flutter/foundation.dart';
-import 'package:tikitaki/data/video_helpers.dart';
 import 'package:tikitaki/data/video_item.dart';
 import 'package:tikitaki/data/video_repository.dart';
 
@@ -25,7 +24,7 @@ class VideoListViewModel extends ChangeNotifier {
     notifyListeners();
     try {
       final result = await _repository.getVideos();
-      _videos = sortByCollection(result);
+      _videos = result;
       _errorMessage = null;
       _state = VideoListState.loaded;
     } catch (e) {
