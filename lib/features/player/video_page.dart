@@ -1,6 +1,7 @@
 import 'dart:developer';
 
 import 'package:flutter/material.dart';
+import 'package:tikitaki/features/player/scrub_gesture_detector.dart';
 import 'package:video_player/video_player.dart';
 
 class VideoPage extends StatefulWidget {
@@ -21,6 +22,7 @@ class _VideoPageState extends State<VideoPage> {
   VideoPlayerController? _controller;
   bool _isInitialized = false;
   bool _hasError = false;
+  Duration _scrubStartPosition = Duration.zero;
 
   @override
   void initState() {
@@ -72,6 +74,33 @@ class _VideoPageState extends State<VideoPage> {
     }
   }
 
+  void _onScrubStart() {
+    final controller = _controller;
+    if (controller == null) return;
+    _scrubStartPosition = controller.value.position;
+    controller.pause();
+  }
+
+  void _onScrubUpdate(double fraction) {
+    final controller = _controller;
+    if (controller == null) return;
+    final totalDuration = controller.value.duration;
+    final offset = totalDuration * fraction;
+    final target = _scrubStartPosition + offset;
+    final clamped = _clampDuration(target, totalDuration);
+    controller.seekTo(clamped);
+  }
+
+  void _onScrubEnd() {
+    _controller?.play();
+  }
+
+  Duration _clampDuration(Duration value, Duration max) {
+    if (value < Duration.zero) return Duration.zero;
+    if (value > max) return max;
+    return value;
+  }
+
   @override
   void dispose() {
     _controller?.removeListener(_onVideoUpdate);
@@ -92,12 +121,17 @@ class _VideoPageState extends State<VideoPage> {
         child: CircularProgressIndicator(color: Colors.white),
       );
     }
-    return GestureDetector(
-      onTap: _togglePlayPause,
-      child: Center(
-        child: AspectRatio(
-          aspectRatio: controller.value.aspectRatio,
-          child: VideoPlayer(controller),
+    return ScrubGestureDetector(
+      onScrubStart: _onScrubStart,
+      onScrubUpdate: _onScrubUpdate,
+      onScrubEnd: _onScrubEnd,
+      child: GestureDetector(
+        onTap: _togglePlayPause,
+        child: Center(
+          child: AspectRatio(
+            aspectRatio: controller.value.aspectRatio,
+            child: VideoPlayer(controller),
+          ),
         ),
       ),
     );
