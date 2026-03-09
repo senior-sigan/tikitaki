@@ -1,17 +1,16 @@
-# tikitaki
+# TikiTaki
 
-A new Flutter project.
+Personal short video viewer for your self-hosted video library. Think Instagram Reels or TikTok, but for your own media collection served from your own server.
 
-## Getting Started
+## What it does
 
-This project is a starting point for a Flutter application.
+- Browse your video library as a thumbnail grid
+- Watch videos in a fullscreen player with vertical swipe navigation — just like TikTok
+- Videos autoplay and loop seamlessly
+- Organize content by collections — videos are automatically grouped by folders on your server
+- Save favorites locally for quick access
+- Point the app at any server that serves your media via a simple API
 
-A few resources to get you started if this is your first Flutter project:
+## How it works
 
-- [Learn Flutter](https://docs.flutter.dev/get-started/learn-flutter)
-- [Write your first Flutter app](https://docs.flutter.dev/get-started/codelab)
-- [Flutter learning resources](https://docs.flutter.dev/reference/learning-resources)
-
-For help getting started with Flutter development, view the
-[online documentation](https://docs.flutter.dev/), which offers tutorials,
-samples, guidance on mobile development, and a full API reference.
+The app connects to a self-hosted server that exposes a video list via a single API endpoint. Thumbnails and videos are streamed directly from the server. No cloud services, no accounts, no tracking — just your videos on your device.
