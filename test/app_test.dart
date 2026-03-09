@@ -101,9 +101,9 @@ void main() {
       await tester.pumpWidget(buildSubject());
       await tester.pump();
 
-      // History screen shows AppBar with "History" title
-      expect(find.byType(AppBar), findsOneWidget);
-      // The History text appears in the AppBar
+      // History screen shows SliverAppBar with "History" title
+      expect(find.byType(SliverAppBar), findsOneWidget);
+      // The History text appears in the SliverAppBar
       check(find.text('History').evaluate().length).isGreaterOrEqual(1);
     });
   });

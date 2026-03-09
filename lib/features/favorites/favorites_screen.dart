@@ -17,25 +17,34 @@ class FavoritesScreen extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(title: const Text('Favorites')),
-      body: ListenableBuilder(
-        listenable: favoritesViewModel,
-        builder: (context, _) {
-          final favorites = favoritesViewModel.favoriteVideos;
-          if (favorites.isEmpty) {
-            return const Center(child: Text('No favorites yet'));
-          }
-          return VideoGrid(
-            videos: favorites,
-            baseUrl: baseUrl,
-            onVideoTap: (video, index) {
-              context.push(
-                '/player',
-                extra: PlayerRouteData(videos: favorites, startIndex: index),
-              );
-            },
-          );
-        },
+      body: NestedScrollView(
+        headerSliverBuilder: (context, innerBoxIsScrolled) => [
+          SliverAppBar(
+            floating: true,
+            snap: true,
+            title: const Text('Favorites'),
+            forceElevated: innerBoxIsScrolled,
+          ),
+        ],
+        body: ListenableBuilder(
+          listenable: favoritesViewModel,
+          builder: (context, _) {
+            final favorites = favoritesViewModel.favoriteVideos;
+            if (favorites.isEmpty) {
+              return const Center(child: Text('No favorites yet'));
+            }
+            return VideoGrid(
+              videos: favorites,
+              baseUrl: baseUrl,
+              onVideoTap: (video, index) {
+                context.push(
+                  '/player',
+                  extra: PlayerRouteData(videos: favorites, startIndex: index),
+                );
+              },
+            );
+          },
+        ),
       ),
     );
   }

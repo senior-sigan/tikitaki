@@ -20,45 +20,54 @@ class HistoryScreen extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(title: const Text('History')),
-      body: ListenableBuilder(
-        listenable: videoListViewModel,
-        builder: (context, _) {
-          return switch (videoListViewModel.state) {
-            VideoListState.initial || VideoListState.loading => const Center(
-              child: CircularProgressIndicator(),
-            ),
-            VideoListState.loaded => RefreshIndicator(
-              onRefresh: videoListViewModel.refresh,
-              child: VideoGrid(
-                videos: videoListViewModel.videos,
-                baseUrl: baseUrl,
-                onVideoTap: (video, index) {
-                  context.push(
-                    '/player',
-                    extra: PlayerRouteData(
-                      videos: videoListViewModel.videos,
-                      startIndex: index,
+      body: NestedScrollView(
+        headerSliverBuilder: (context, innerBoxIsScrolled) => [
+          SliverAppBar(
+            floating: true,
+            snap: true,
+            title: const Text('History'),
+            forceElevated: innerBoxIsScrolled,
+          ),
+        ],
+        body: ListenableBuilder(
+          listenable: videoListViewModel,
+          builder: (context, _) {
+            return switch (videoListViewModel.state) {
+              VideoListState.initial || VideoListState.loading => const Center(
+                child: CircularProgressIndicator(),
+              ),
+              VideoListState.loaded => RefreshIndicator(
+                onRefresh: videoListViewModel.refresh,
+                child: VideoGrid(
+                  videos: videoListViewModel.videos,
+                  baseUrl: baseUrl,
+                  onVideoTap: (video, index) {
+                    context.push(
+                      '/player',
+                      extra: PlayerRouteData(
+                        videos: videoListViewModel.videos,
+                        startIndex: index,
+                      ),
+                    );
+                  },
+                ),
+              ),
+              VideoListState.error => Center(
+                child: Column(
+                  mainAxisSize: MainAxisSize.min,
+                  children: [
+                    Text(videoListViewModel.errorMessage ?? 'Unknown error'),
+                    const SizedBox(height: 16),
+                    ElevatedButton(
+                      onPressed: videoListViewModel.load,
+                      child: const Text('Retry'),
                     ),
-                  );
-                },
+                  ],
+                ),
               ),
-            ),
-            VideoListState.error => Center(
-              child: Column(
-                mainAxisSize: MainAxisSize.min,
-                children: [
-                  Text(videoListViewModel.errorMessage ?? 'Unknown error'),
-                  const SizedBox(height: 16),
-                  ElevatedButton(
-                    onPressed: videoListViewModel.load,
-                    child: const Text('Retry'),
-                  ),
-                ],
-              ),
-            ),
-          };
-        },
+            };
+          },
+        ),
       ),
     );
   }

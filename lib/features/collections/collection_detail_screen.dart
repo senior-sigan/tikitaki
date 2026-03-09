@@ -22,25 +22,34 @@ class CollectionDetailScreen extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(title: Text(collectionName)),
-      body: ListenableBuilder(
-        listenable: collectionsViewModel,
-        builder: (context, _) {
-          final videos = collectionsViewModel.collections[collectionName];
-          if (videos == null || videos.isEmpty) {
-            return const Center(child: Text('No videos in this collection'));
-          }
-          return VideoGrid(
-            videos: videos,
-            baseUrl: baseUrl,
-            onVideoTap: (video, index) {
-              context.push(
-                '/player',
-                extra: PlayerRouteData(videos: videos, startIndex: index),
-              );
-            },
-          );
-        },
+      body: NestedScrollView(
+        headerSliverBuilder: (context, innerBoxIsScrolled) => [
+          SliverAppBar(
+            floating: true,
+            snap: true,
+            title: Text(collectionName),
+            forceElevated: innerBoxIsScrolled,
+          ),
+        ],
+        body: ListenableBuilder(
+          listenable: collectionsViewModel,
+          builder: (context, _) {
+            final videos = collectionsViewModel.collections[collectionName];
+            if (videos == null || videos.isEmpty) {
+              return const Center(child: Text('No videos in this collection'));
+            }
+            return VideoGrid(
+              videos: videos,
+              baseUrl: baseUrl,
+              onVideoTap: (video, index) {
+                context.push(
+                  '/player',
+                  extra: PlayerRouteData(videos: videos, startIndex: index),
+                );
+              },
+            );
+          },
+        ),
       ),
     );
   }
