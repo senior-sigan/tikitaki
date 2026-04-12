@@ -45,6 +45,85 @@ void main() {
     videoListViewModel.dispose();
   });
 
+  group('sortOrder', () {
+    test('sortOrder defaults to apiOrder', () {
+      check(collectionsViewModel.sortOrder)
+          .equals(CollectionSortOrder.apiOrder);
+    });
+
+    test(
+      'collectionPreviews_apiOrder_preservesInsertionOrder',
+      () async {
+        when(
+          () => mockRepository.getVideos(),
+        ).thenAnswer((_) async => [dogVideo, catVideo1, catVideo2]);
+
+        await videoListViewModel.load();
+
+        final previews = collectionsViewModel.collectionPreviews;
+        check(previews.map((p) => p.name).toList())
+            .deepEquals(['dogs', 'cats']);
+      },
+    );
+
+    test(
+      'collectionPreviews_nameOrder_sortsByNameCaseInsensitive',
+      () async {
+        when(
+          () => mockRepository.getVideos(),
+        ).thenAnswer((_) async => [dogVideo, catVideo1, catVideo2]);
+
+        await videoListViewModel.load();
+
+        collectionsViewModel.setSortOrder(CollectionSortOrder.name);
+
+        final previews = collectionsViewModel.collectionPreviews;
+        check(previews.map((p) => p.name).toList())
+            .deepEquals(['cats', 'dogs']);
+      },
+    );
+
+    test(
+      'setSortOrder_notifiesListeners',
+      () async {
+        when(
+          () => mockRepository.getVideos(),
+        ).thenAnswer((_) async => [dogVideo, catVideo1]);
+
+        await videoListViewModel.load();
+
+        var notified = false;
+        collectionsViewModel.addListener(() {
+          notified = true;
+        });
+
+        collectionsViewModel.setSortOrder(CollectionSortOrder.name);
+        check(notified).equals(true);
+      },
+    );
+
+    test(
+      'setSortOrder_invalidatesOnlyPreviews_notCollections',
+      () async {
+        when(
+          () => mockRepository.getVideos(),
+        ).thenAnswer((_) async => [dogVideo, catVideo1]);
+
+        await videoListViewModel.load();
+
+        // Access both caches to populate them.
+        final collectionsBefore = collectionsViewModel.collections;
+        collectionsViewModel.collectionPreviews;
+
+        collectionsViewModel.setSortOrder(CollectionSortOrder.name);
+
+        // Collections map should be the same cached instance.
+        check(identical(collectionsViewModel.collections, collectionsBefore))
+            .equals(true);
+      },
+    );
+  });
+
   group('CollectionsViewModel', () {
     test('collections returns grouped videos from loaded data', () async {
       when(
