@@ -19,6 +19,26 @@ class CollectionsScreen extends StatelessWidget {
   Widget build(BuildContext context) {
     return AppScaffold(
       title: 'Collections',
+      actions: [
+        ListenableBuilder(
+          listenable: collectionsViewModel,
+          builder: (context, _) {
+            final isNameSort =
+                collectionsViewModel.sortOrder == CollectionSortOrder.name;
+            return IconButton(
+              icon: Icon(isNameSort ? Icons.sort_by_alpha : Icons.access_time),
+              tooltip: isNameSort ? 'Sorted by name' : 'Sorted by date',
+              onPressed: () {
+                collectionsViewModel.setSortOrder(
+                  isNameSort
+                      ? CollectionSortOrder.apiOrder
+                      : CollectionSortOrder.name,
+                );
+              },
+            );
+          },
+        ),
+      ],
       body: ListenableBuilder(
         listenable: collectionsViewModel,
         builder: (context, _) {

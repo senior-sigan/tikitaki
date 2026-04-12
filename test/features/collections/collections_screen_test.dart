@@ -26,12 +26,22 @@ class FakeVideoListViewModel extends ChangeNotifier
 class FakeCollectionsViewModel extends ChangeNotifier
     implements CollectionsViewModel {
   List<({String name, VideoItem preview})> _previews = [];
+  CollectionSortOrder _sortOrder = CollectionSortOrder.apiOrder;
 
   @override
   Map<String, List<VideoItem>> get collections => {};
 
   @override
   List<({String name, VideoItem preview})> get collectionPreviews => _previews;
+
+  @override
+  CollectionSortOrder get sortOrder => _sortOrder;
+
+  @override
+  void setSortOrder(CollectionSortOrder value) {
+    _sortOrder = value;
+    notifyListeners();
+  }
 
   void setPreviews(List<({String name, VideoItem preview})> p) {
     _previews = p;
