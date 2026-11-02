@@ -1,0 +1,26 @@
+[tools]
+java = "temurin-21.0.11+10.0.LTS"
+flutter = "3.41.9"
+ruby = "3.3.11"
+
+[env]
+APP_ENV = "test"
+
+[tasks."analyze"]
+description = "Run Flutter static analysis"
+run = "flutter analyze"
+
+[tasks."test"]
+description = "Run frontend unit and widget tests"
+run = "flutter test"
+
+[tasks."web:run"]
+description = "Run the Flutter app in Chrome"
+run = "flutter run -d chrome"
+
+[tasks."web:build"]
+description = "Run the Flutter app in Chrome"
+run = "flutter build web --release"
+
+[settings.ruby]
+compile = false
