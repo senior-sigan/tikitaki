@@ -4,7 +4,7 @@ type: module-design
 status: draft
 title: Navigation and shared presentation
 parent: tikitaki-architecture
-depends-on: [tikitaki-data]
+depends-on: [tikitaki-data, tikitaki-features, tikitaki-player]
 ---
 
 ## Responsibility
